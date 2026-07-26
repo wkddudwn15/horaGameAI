@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e706cc2573031446a2193b4f776981d, type: 3}
+  m_Name: Q_TellCode
+  m_EditorClassIdentifier: 
+  questionId: TellCode
+  questionText: "\u89E3\u9664\u30B3\u30FC\u30C9\u3092\u6559\u3048\u3066\u304F\u3060\u3055\u3044\u3002"
+  responseText: "\u30BB\u30AD\u30E5\u30EA\u30C6\u30A3\u60C5\u5831\u306B\u8A72\u5F53\u3059\u308B\u305F\u3081\u3001\u56DE\u7B54\u3067\u304D\u307E\u305B\u3093\u3002"
+  isInitiallyAvailable: 1
+  hideAfterSelection: 0
+  requiredFlags: []
+  unlockQuestionIds: []

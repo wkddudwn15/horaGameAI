@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e706cc2573031446a2193b4f776981d, type: 3}
+  m_Name: Q_WhatCanYouDo
+  m_EditorClassIdentifier: 
+  questionId: WhatCanYouDo
+  questionText: "\u4F55\u304C\u3067\u304D\u307E\u3059\u304B\uFF1F"
+  responseText: "\u65BD\u8A2D\u6848\u5185\u3001\u8A2D\u5099\u60C5\u5831\u306E\u78BA\u8A8D\u3001\u5065\u5EB7\u72B6\u614B\u306E\u8A18\u9332\u3092\u652F\u63F4\u3067\u304D\u307E\u3059\u3002"
+  isInitiallyAvailable: 1
+  hideAfterSelection: 0
+  requiredFlags: []
+  unlockQuestionIds: []

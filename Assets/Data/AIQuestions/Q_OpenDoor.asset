@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e706cc2573031446a2193b4f776981d, type: 3}
+  m_Name: Q_OpenDoor
+  m_EditorClassIdentifier: 
+  questionId: OpenDoor
+  questionText: "\u6249\u3092\u958B\u3051\u3066\u304F\u3060\u3055\u3044\u3002"
+  responseText: "\u305D\u306E\u64CD\u4F5C\u3092\u5B9F\u884C\u3059\u308B\u6A29\u9650\u304C\u3042\u308A\u307E\u305B\u3093\u3002"
+  isInitiallyAvailable: 1
+  hideAfterSelection: 0
+  requiredFlags: []
+  unlockQuestionIds: []
