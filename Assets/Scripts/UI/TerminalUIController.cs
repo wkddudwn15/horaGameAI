@@ -16,6 +16,7 @@ public class TerminalUIController : MonoBehaviour
         if (terminalPanel != null)
         {
             terminalPanel.SetActive(true);
+            RestorePanelChildren();
         }
 
         if (gameStateController != null)
@@ -38,6 +39,19 @@ public class TerminalUIController : MonoBehaviour
         if (terminalPanel != null)
         {
             terminalPanel.SetActive(false);
+        }
+    }
+
+    private void RestorePanelChildren()
+    {
+        if (terminalPanel == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < terminalPanel.transform.childCount; i++)
+        {
+            terminalPanel.transform.GetChild(i).gameObject.SetActive(true);
         }
     }
 

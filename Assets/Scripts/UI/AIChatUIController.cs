@@ -39,6 +39,7 @@ public class AIChatUIController : MonoBehaviour
         if (chatPanel != null)
         {
             chatPanel.SetActive(true);
+            RestoreVisibleChatChildren();
         }
 
         if (gameStateController != null)
@@ -70,6 +71,30 @@ public class AIChatUIController : MonoBehaviour
         if (chatPanel != null)
         {
             chatPanel.SetActive(false);
+        }
+    }
+
+    private void RestoreVisibleChatChildren()
+    {
+        if (chatPanel == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < chatPanel.transform.childCount; i++)
+        {
+            GameObject child = chatPanel.transform.GetChild(i).gameObject;
+            if (messageTextPrefab != null && child == messageTextPrefab.gameObject)
+            {
+                continue;
+            }
+
+            if (choiceButtonPrefab != null && child == choiceButtonPrefab.gameObject)
+            {
+                continue;
+            }
+
+            child.SetActive(true);
         }
     }
 
@@ -107,9 +132,13 @@ public class AIChatUIController : MonoBehaviour
             }
 
             Button button = Instantiate(choiceButtonPrefab, questionChoicesContent);
+            button.gameObject.SetActive(true);
+            button.enabled = true;
+
             TextMeshProUGUI label = button.GetComponentInChildren<TextMeshProUGUI>();
             if (label != null)
             {
+                label.enabled = true;
                 label.text = question.QuestionText;
             }
 
@@ -169,6 +198,8 @@ public class AIChatUIController : MonoBehaviour
         }
 
         TextMeshProUGUI text = Instantiate(messageTextPrefab, historyContent);
+        text.gameObject.SetActive(true);
+        text.enabled = true;
         text.text = FormatMessage(message);
     }
 
