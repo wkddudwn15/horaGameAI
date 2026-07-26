@@ -44,12 +44,25 @@ public class OpeningSequenceController : MonoBehaviour
         "現在、生活支援AIが起動しました。"
     };
 
+    private Coroutine openingRoutine;
+
     private void Start()
     {
         if (!hasPlayed)
         {
-            StartCoroutine(PlayOpening());
+            openingRoutine = StartCoroutine(PlayOpening());
         }
+    }
+
+    private void OnDisable()
+    {
+        if (openingRoutine != null)
+        {
+            StopCoroutine(openingRoutine);
+            openingRoutine = null;
+        }
+
+        depthOfField = null;
     }
 
     private IEnumerator PlayOpening()
@@ -92,19 +105,10 @@ public class OpeningSequenceController : MonoBehaviour
 
     private void SetupDepthOfField()
     {
-        depthOfField = null;
-        if (postProcessVolume != null && postProcessVolume.profile != null)
+        if (TryGetDepthOfField(out DepthOfField currentDepthOfField))
         {
-            postProcessVolume.profile.TryGet(out depthOfField);
-        }
-
-        if (depthOfField != null)
-        {
-            depthOfField.active = true;
-            depthOfField.mode.Override(DepthOfFieldMode.Gaussian);
-            depthOfField.gaussianStart.Override(startFocusDistance);
-            depthOfField.gaussianEnd.Override(startFocusDistance + 0.1f);
-            depthOfField.highQualitySampling.Override(true);
+            depthOfField = currentDepthOfField;
+            ApplyDepthOfFieldSettings(depthOfField, startFocusDistance, startFocusDistance + 0.1f);
         }
     }
 
@@ -128,7 +132,7 @@ public class OpeningSequenceController : MonoBehaviour
 
     private IEnumerator ReleaseBlur()
     {
-        if (depthOfField == null)
+        if (!TryGetDepthOfField(out depthOfField))
         {
             yield break;
         }
@@ -139,9 +143,69 @@ public class OpeningSequenceController : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / sitUpDuration;
             float focus = Mathf.Lerp(startFocusDistance, endFocusDistance, t);
-            depthOfField.gaussianStart.Override(focus);
-            depthOfField.gaussianEnd.Override(focus + 3f);
+            if (!TryGetDepthOfField(out depthOfField))
+            {
+                yield break;
+            }
+
+            ApplyDepthOfFieldSettings(depthOfField, focus, focus + 3f);
             yield return null;
+        }
+    }
+
+    private bool TryGetDepthOfField(out DepthOfField currentDepthOfField)
+    {
+        currentDepthOfField = null;
+
+        if (postProcessVolume == null)
+        {
+            return false;
+        }
+
+        VolumeProfile volumeProfile;
+        try
+        {
+            volumeProfile = postProcessVolume.profile;
+        }
+        catch (MissingReferenceException)
+        {
+            return false;
+        }
+
+        if (volumeProfile == null)
+        {
+            return false;
+        }
+
+        try
+        {
+            return volumeProfile.TryGet(out currentDepthOfField) && currentDepthOfField != null;
+        }
+        catch (MissingReferenceException)
+        {
+            currentDepthOfField = null;
+            return false;
+        }
+    }
+
+    private static void ApplyDepthOfFieldSettings(DepthOfField targetDepthOfField, float gaussianStart, float gaussianEnd)
+    {
+        if (targetDepthOfField == null)
+        {
+            return;
+        }
+
+        try
+        {
+            targetDepthOfField.active = true;
+            targetDepthOfField.mode.Override(DepthOfFieldMode.Gaussian);
+            targetDepthOfField.gaussianStart.Override(gaussianStart);
+            targetDepthOfField.gaussianEnd.Override(gaussianEnd);
+            targetDepthOfField.highQualitySampling.Override(true);
+        }
+        catch (MissingReferenceException)
+        {
+            // VolumeProfile再生成やPlay停止中に破棄済みなら、ぼかしだけ省略して進行する。
         }
     }
 
