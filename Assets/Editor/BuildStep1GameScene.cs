@@ -663,14 +663,21 @@ public static class BuildStep1GameScene
 
     private static Shader ResolveSceneMaterialShader()
     {
-        string[] shaderNames =
-        {
-            "Universal Render Pipeline/Lit",
-            "Universal Render Pipeline/Simple Lit",
-            "Universal Render Pipeline/Unlit",
-            "Unlit/Color",
-            "Sprites/Default"
-        };
+        RenderPipelineAsset currentPipeline = GraphicsSettings.currentRenderPipeline;
+        bool isUrpActive = IsUniversalRenderPipeline(currentPipeline);
+
+        string[] shaderNames = isUrpActive
+            ? new[]
+            {
+                "Universal Render Pipeline/Lit",
+                "Universal Render Pipeline/Simple Lit",
+                "Universal Render Pipeline/Unlit"
+            }
+            : new[]
+            {
+                "Standard",
+                "Unlit/Color"
+            };
 
         foreach (string shaderName in shaderNames)
         {
@@ -681,8 +688,21 @@ public static class BuildStep1GameScene
             }
         }
 
-        Debug.LogError("No compatible shader was found for generated Step 1 materials.");
+        string pipelineName = currentPipeline == null ? "Built-in Render Pipeline" : currentPipeline.GetType().Name;
+        Debug.LogError($"No compatible shader was found for generated Step 1 materials. Active pipeline: {pipelineName}");
         return null;
+    }
+
+    private static bool IsUniversalRenderPipeline(RenderPipelineAsset pipelineAsset)
+    {
+        if (pipelineAsset == null)
+        {
+            return false;
+        }
+
+        System.Type pipelineType = pipelineAsset.GetType();
+        return pipelineType.Name.Contains("UniversalRenderPipelineAsset")
+            || pipelineType.FullName.Contains("Universal.RenderPipeline");
     }
 
     private static void SetMaterialColor(Material material, Color color)
@@ -701,8 +721,6 @@ public static class BuildStep1GameScene
         {
             material.SetColor("_Color", color);
         }
-
-        material.color = color;
     }
 
     private static void NormalizeSceneCamerasAndAudio(Camera gameplayCamera)
