@@ -38,6 +38,7 @@ public static class BuildStep1GameScene
         BuildEnvironment(environment.transform, materials);
 
         PlayerRefs player = BuildPlayer();
+        NormalizeSceneCamerasAndAudio(player.Camera);
         ManagerRefs managers = BuildManagers();
         UiRefs ui = BuildGameCanvas();
 
@@ -637,21 +638,118 @@ public static class BuildStep1GameScene
     {
         string path = $"Assets/Materials/{name}.mat";
         Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
+        Shader shader = ResolveSceneMaterialShader();
         if (material == null)
         {
-            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
             if (shader == null)
             {
-                shader = Shader.Find("Standard");
+                Debug.LogError($"Step 1 material was not created because no compatible shader was found: {path}");
+                return null;
             }
 
             material = new Material(shader);
             AssetDatabase.CreateAsset(material, path);
         }
 
-        material.color = color;
+        if (shader != null && material.shader != shader)
+        {
+            material.shader = shader;
+        }
+
+        SetMaterialColor(material, color);
         EditorUtility.SetDirty(material);
         return material;
+    }
+
+    private static Shader ResolveSceneMaterialShader()
+    {
+        string[] shaderNames =
+        {
+            "Universal Render Pipeline/Lit",
+            "Universal Render Pipeline/Simple Lit",
+            "Universal Render Pipeline/Unlit",
+            "Unlit/Color",
+            "Sprites/Default"
+        };
+
+        foreach (string shaderName in shaderNames)
+        {
+            Shader shader = Shader.Find(shaderName);
+            if (shader != null)
+            {
+                return shader;
+            }
+        }
+
+        Debug.LogError("No compatible shader was found for generated Step 1 materials.");
+        return null;
+    }
+
+    private static void SetMaterialColor(Material material, Color color)
+    {
+        if (material == null)
+        {
+            return;
+        }
+
+        if (material.HasProperty("_BaseColor"))
+        {
+            material.SetColor("_BaseColor", color);
+        }
+
+        if (material.HasProperty("_Color"))
+        {
+            material.SetColor("_Color", color);
+        }
+
+        material.color = color;
+    }
+
+    private static void NormalizeSceneCamerasAndAudio(Camera gameplayCamera)
+    {
+        if (gameplayCamera == null)
+        {
+            return;
+        }
+
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (camera == null)
+            {
+                continue;
+            }
+
+            camera.gameObject.tag = camera == gameplayCamera ? "MainCamera" : "Untagged";
+        }
+
+        AudioListener[] gameplayListeners = gameplayCamera.GetComponents<AudioListener>();
+        if (gameplayListeners.Length == 0)
+        {
+            gameplayCamera.gameObject.AddComponent<AudioListener>();
+            gameplayListeners = gameplayCamera.GetComponents<AudioListener>();
+        }
+
+        for (int i = 0; i < gameplayListeners.Length; i++)
+        {
+            if (i == 0)
+            {
+                gameplayListeners[i].enabled = true;
+            }
+            else
+            {
+                Object.DestroyImmediate(gameplayListeners[i]);
+            }
+        }
+
+        foreach (AudioListener listener in Object.FindObjectsByType<AudioListener>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (listener == null || listener.gameObject == gameplayCamera.gameObject)
+            {
+                continue;
+            }
+
+            Object.DestroyImmediate(listener);
+        }
     }
 
     private static void EnsureEventSystem()
