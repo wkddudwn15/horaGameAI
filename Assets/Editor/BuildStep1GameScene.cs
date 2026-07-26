@@ -877,7 +877,51 @@ public static class BuildStep1GameScene
         }
 
         text.font = fontAsset;
+        ResetTmpMaterialPreset(text, fontAsset);
         EditorUtility.SetDirty(text);
+    }
+
+    private static void ResetTmpMaterialPreset(TextMeshProUGUI text, TMP_FontAsset fontAsset)
+    {
+        if (text == null || fontAsset == null || fontAsset.material == null)
+        {
+            return;
+        }
+
+        text.fontSharedMaterial = fontAsset.material;
+        ResetTmpSdfMaterialProperties(text.fontSharedMaterial);
+    }
+
+    private static void ResetTmpSdfMaterialProperties(Material material)
+    {
+        if (material == null)
+        {
+            return;
+        }
+
+        SetMaterialFloatIfExists(material, "_FaceDilate", 0f);
+        SetMaterialFloatIfExists(material, "_OutlineWidth", 0f);
+        SetMaterialFloatIfExists(material, "_OutlineSoftness", 0f);
+        SetMaterialFloatIfExists(material, "_UnderlaySoftness", 0f);
+        SetMaterialColorIfExists(material, "_FaceColor", Color.white);
+        SetMaterialColorIfExists(material, "_OutlineColor", new Color(0f, 0f, 0f, 1f));
+        EditorUtility.SetDirty(material);
+    }
+
+    private static void SetMaterialFloatIfExists(Material material, string propertyName, float value)
+    {
+        if (material != null && material.HasProperty(propertyName))
+        {
+            material.SetFloat(propertyName, value);
+        }
+    }
+
+    private static void SetMaterialColorIfExists(Material material, string propertyName, Color value)
+    {
+        if (material != null && material.HasProperty(propertyName))
+        {
+            material.SetColor(propertyName, value);
+        }
     }
 
     private static TMP_FontAsset ResolveBuilderTmpFontAsset()
