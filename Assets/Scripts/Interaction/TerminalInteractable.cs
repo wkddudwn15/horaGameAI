@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TerminalInteractable : MonoBehaviour, IInteractable
 {
-    [SerializeField] private string interactionText = "E：調べる";
+    [SerializeField] private string interactionText = "Press E to use";
     [SerializeField] private TerminalUIController terminalUIController;
     [SerializeField] private Renderer screenRenderer;
     [SerializeField] private GameObject worldSpaceCanvas;

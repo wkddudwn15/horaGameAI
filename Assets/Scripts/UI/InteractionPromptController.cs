@@ -17,7 +17,7 @@ public class InteractionPromptController : MonoBehaviour
             return;
         }
 
-        promptText.text = string.IsNullOrWhiteSpace(message) ? "E：調べる" : message;
+        promptText.text = string.IsNullOrWhiteSpace(message) ? "Press E to use" : message;
         promptText.gameObject.SetActive(true);
     }
 

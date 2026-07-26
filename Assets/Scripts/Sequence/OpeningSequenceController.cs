@@ -39,9 +39,9 @@ public class OpeningSequenceController : MonoBehaviour
 
     private readonly string[] openingLines =
     {
-        "おはようございます。",
-        "体調はいかがですか。",
-        "現在、生活支援AIが起動しました。"
+        "Good morning.",
+        "How are you feeling?",
+        "The life support AI is now online."
     };
 
     private Coroutine openingRoutine;

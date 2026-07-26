@@ -22,6 +22,7 @@ public static class BuildStep1GameScene
     private const string InputReferenceFolder = "Assets/Settings/InputActionReferences";
     private const string VolumeProfilePath = "Assets/Settings/Step1OpeningVolumeProfile.asset";
     private const string FallbackTmpFontAssetPath = "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset";
+    private const bool UseEnglishDebugText = true;
     private static readonly string[] JapaneseTmpFontSearchFolders =
     {
         "Assets/Fonts",
@@ -242,37 +243,37 @@ public static class BuildStep1GameScene
         Image fadeImage = CreateImage("FadeImage", canvasObject.transform, StretchRect(), new Color(0f, 0f, 0f, 1f));
         fadeImage.raycastTarget = false;
 
-        TextMeshProUGUI subtitleText = CreateText("SubtitleText", canvasObject.transform, "おはようございます。", 34, TextAlignmentOptions.Center, new Color(0.92f, 0.96f, 1f));
+        TextMeshProUGUI subtitleText = CreateText("SubtitleText", canvasObject.transform, "Good morning.", 34, TextAlignmentOptions.Center, new Color(0.92f, 0.96f, 1f));
         SetAnchoredRect(subtitleText.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 125f), new Vector2(900f, 70f));
         CanvasGroup subtitleGroup = GetOrAdd<CanvasGroup>(subtitleText.gameObject);
         subtitleGroup.alpha = 0f;
 
-        TextMeshProUGUI promptText = CreateText("InteractionPromptText", canvasObject.transform, "E：調べる", 26, TextAlignmentOptions.Center, Color.white);
+        TextMeshProUGUI promptText = CreateText("InteractionPromptText", canvasObject.transform, "Press E to use", 26, TextAlignmentOptions.Center, Color.white);
         SetAnchoredRect(promptText.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -42f), new Vector2(260f, 44f));
         promptText.gameObject.SetActive(false);
 
         GameObject terminalPanel = CreatePanel("TerminalPanel", canvasObject.transform, new Vector2(0.5f, 0.5f), new Vector2(560f, 320f), new Color(0.015f, 0.023f, 0.028f, 0.98f));
-        CreateText("TitleText", terminalPanel.transform, "生活支援AI", 38, TextAlignmentOptions.Center, Color.white, new Vector2(0f, 92f), new Vector2(460f, 58f));
-        CreateText("MessageText", terminalPanel.transform, "チャットを開始しますか？", 30, TextAlignmentOptions.Center, new Color(0.96f, 0.99f, 1f, 1f), new Vector2(0f, 24f), new Vector2(470f, 52f));
-        Button terminalStartButton = CreateButton("StartButton", terminalPanel.transform, "開始", new Vector2(-92f, -88f), new Vector2(160f, 54f));
-        Button terminalCloseButton = CreateButton("CloseButton", terminalPanel.transform, "閉じる", new Vector2(92f, -88f), new Vector2(160f, 54f));
+        CreateText("TitleText", terminalPanel.transform, "TERMINAL", 38, TextAlignmentOptions.Center, Color.white, new Vector2(0f, 92f), new Vector2(460f, 58f));
+        CreateText("MessageText", terminalPanel.transform, "A communication terminal is active.", 30, TextAlignmentOptions.Center, new Color(0.96f, 0.99f, 1f, 1f), new Vector2(0f, 24f), new Vector2(470f, 52f));
+        Button terminalStartButton = CreateButton("StartButton", terminalPanel.transform, "START", new Vector2(-92f, -88f), new Vector2(160f, 54f));
+        Button terminalCloseButton = CreateButton("CloseButton", terminalPanel.transform, "CLOSE", new Vector2(92f, -88f), new Vector2(160f, 54f));
         terminalPanel.SetActive(false);
 
         GameObject chatPanel = CreatePanel("ChatPanel", canvasObject.transform, new Vector2(0.5f, 0.5f), new Vector2(980f, 720f), new Color(0.012f, 0.016f, 0.02f, 0.98f));
-        TextMeshProUGUI aiNameText = CreateText("AINameText", chatPanel.transform, "生活支援AI", 34, TextAlignmentOptions.Left, Color.white, new Vector2(-380f, 305f), new Vector2(320f, 52f));
+        TextMeshProUGUI aiNameText = CreateText("AINameText", chatPanel.transform, "SYSTEM AI", 34, TextAlignmentOptions.Left, Color.white, new Vector2(-380f, 305f), new Vector2(320f, 52f));
         RectTransform historyContent = CreateScrollView("HistoryScrollView", chatPanel.transform, new Vector2(-170f, 55f), new Vector2(570f, 500f)).Content;
         RectTransform choicesContent = CreateScrollView("QuestionChoicesScrollView", chatPanel.transform, new Vector2(300f, 55f), new Vector2(310f, 500f)).Content;
-        Button chatCloseButton = CreateButton("CloseButton", chatPanel.transform, "閉じる", new Vector2(390f, 305f), new Vector2(130f, 44f));
+        Button chatCloseButton = CreateButton("CloseButton", chatPanel.transform, "CLOSE", new Vector2(390f, 305f), new Vector2(130f, 44f));
         TextMeshProUGUI messageTextPrefab = CreateText("MessageTextPrefab", chatPanel.transform, "System: Message", 24, TextAlignmentOptions.Left, Color.white, new Vector2(0f, -320f), new Vector2(500f, 64f));
         messageTextPrefab.gameObject.SetActive(false);
-        Button choiceButtonPrefab = CreateButton("ChoiceButtonPrefab", chatPanel.transform, "質問候補", new Vector2(0f, -370f), new Vector2(292f, 58f));
+        Button choiceButtonPrefab = CreateButton("ChoiceButtonPrefab", chatPanel.transform, "QUESTION", new Vector2(0f, -370f), new Vector2(292f, 58f));
         choiceButtonPrefab.gameObject.SetActive(false);
         chatPanel.SetActive(false);
 
         GameObject pausePanel = CreatePanel("PausePanel", canvasObject.transform, new Vector2(0.5f, 0.5f), new Vector2(460f, 360f), new Color(0.02f, 0.025f, 0.03f, 0.94f));
-        Button resumeButton = CreateButton("ResumeButton", pausePanel.transform, "ゲームに戻る", new Vector2(0f, 80f), new Vector2(260f, 52f));
-        Button returnTitleButton = CreateButton("ReturnTitleButton", pausePanel.transform, "タイトルへ戻る", new Vector2(0f, 10f), new Vector2(260f, 52f));
-        Button quitButton = CreateButton("QuitButton", pausePanel.transform, "ゲームを終了する", new Vector2(0f, -60f), new Vector2(260f, 52f));
+        Button resumeButton = CreateButton("ResumeButton", pausePanel.transform, "RESUME", new Vector2(0f, 80f), new Vector2(260f, 52f));
+        Button returnTitleButton = CreateButton("ReturnTitleButton", pausePanel.transform, "TITLE", new Vector2(0f, 10f), new Vector2(260f, 52f));
+        Button quitButton = CreateButton("QuitButton", pausePanel.transform, "QUIT", new Vector2(0f, -60f), new Vector2(260f, 52f));
         pausePanel.SetActive(false);
 
         return new UiRefs(
@@ -312,6 +313,7 @@ public static class BuildStep1GameScene
         SetSerializedObject(terminalInteractable, "terminalUIController", terminalUi);
         SetSerializedObject(terminalInteractable, "screenRenderer", screenRenderer);
         SetSerializedObject(terminalInteractable, "worldSpaceCanvas", worldCanvas.gameObject);
+        SetSerializedString(terminalInteractable, "interactionText", "Press E to use");
 
         if (screenRenderer != null)
         {
@@ -378,6 +380,7 @@ public static class BuildStep1GameScene
         SetSerializedObject(ui.ChatUi, "questionChoicesContent", ui.ChoicesContent);
         SetSerializedObject(ui.ChatUi, "messageTextPrefab", ui.MessageTextPrefab);
         SetSerializedObject(ui.ChatUi, "choiceButtonPrefab", ui.ChoiceButtonPrefab);
+        SetSerializedString(ui.ChatUi, "aiName", "SYSTEM AI");
 
         SetSerializedObject(ui.PauseMenu, "pausePanel", ui.PausePanel);
         SetSerializedObject(ui.PauseMenu, "gameStateController", managers.GameStateController);
@@ -498,11 +501,11 @@ public static class BuildStep1GameScene
 
     private static void EnsureWorldTerminalText(Transform parent)
     {
-        TextMeshProUGUI title = CreateText("TitleText", parent, "生活支援AI", 48, TextAlignmentOptions.Center, new Color(0.92f, 1f, 1f, 1f));
+        TextMeshProUGUI title = CreateText("TitleText", parent, "TERMINAL", 48, TextAlignmentOptions.Center, new Color(0.92f, 1f, 1f, 1f));
         SetAnchoredRect(title.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 58f), new Vector2(360f, 58f));
-        TextMeshProUGUI message = CreateText("MessageText", parent, "チャットを開始しますか？", 34, TextAlignmentOptions.Center, Color.white);
+        TextMeshProUGUI message = CreateText("MessageText", parent, "A communication terminal is active.", 34, TextAlignmentOptions.Center, Color.white);
         SetAnchoredRect(message.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 0f), new Vector2(380f, 50f));
-        TextMeshProUGUI start = CreateText("StartLabelText", parent, "［開始］", 36, TextAlignmentOptions.Center, new Color(0.92f, 1f, 1f, 1f));
+        TextMeshProUGUI start = CreateText("StartLabelText", parent, "[START]", 36, TextAlignmentOptions.Center, new Color(0.92f, 1f, 1f, 1f));
         SetAnchoredRect(start.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -62f), new Vector2(260f, 50f));
     }
 
@@ -931,6 +934,17 @@ public static class BuildStep1GameScene
             return cachedTmpFontAsset;
         }
 
+        if (UseEnglishDebugText)
+        {
+            cachedTmpFontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FallbackTmpFontAssetPath);
+            if (cachedTmpFontAsset == null)
+            {
+                Debug.LogWarning($"LiberationSans SDF was not found: {FallbackTmpFontAssetPath}");
+            }
+
+            return cachedTmpFontAsset;
+        }
+
         TMP_FontAsset japaneseFont = FindJapaneseTmpFontAsset();
         if (japaneseFont != null)
         {
@@ -1111,6 +1125,26 @@ public static class BuildStep1GameScene
         }
 
         property.objectReferenceValue = value;
+        serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(target);
+    }
+
+    private static void SetSerializedString(Object target, string propertyName, string value)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        SerializedObject serializedObject = new SerializedObject(target);
+        SerializedProperty property = serializedObject.FindProperty(propertyName);
+        if (property == null)
+        {
+            Debug.LogWarning($"Serialized property was not found: {target.GetType().Name}.{propertyName}");
+            return;
+        }
+
+        property.stringValue = value;
         serializedObject.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(target);
     }

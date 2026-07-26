@@ -18,7 +18,7 @@ public class AIChatUIController : MonoBehaviour
     [SerializeField] private Button choiceButtonPrefab;
 
     [Header("Settings")]
-    [SerializeField] private string aiName = "生活支援AI";
+    [SerializeField] private string aiName = "SYSTEM AI";
     [SerializeField] private float responseDelay = 0.6f;
 
     private readonly List<Button> activeChoiceButtons = new List<Button>();
@@ -139,7 +139,7 @@ public class AIChatUIController : MonoBehaviour
             if (label != null)
             {
                 label.enabled = true;
-                label.text = question.QuestionText;
+                label.text = GetDisplayQuestionText(question);
             }
 
             string questionId = question.QuestionId;
@@ -205,14 +205,58 @@ public class AIChatUIController : MonoBehaviour
 
     private static string FormatMessage(ChatMessage message)
     {
+        string displayMessage = GetDisplayMessageText(message);
         string role = message.Role switch
         {
-            ChatRole.Player => "あなた",
-            ChatRole.AI => "生活支援AI",
+            ChatRole.Player => "YOU",
+            ChatRole.AI => "SYSTEM AI",
             _ => "System"
         };
 
-        return $"{role}: {message.Message}";
+        return $"{role}: {displayMessage}";
+    }
+
+    private static string GetDisplayQuestionText(AIQuestionData question)
+    {
+        if (question == null)
+        {
+            return string.Empty;
+        }
+
+        return question.QuestionId switch
+        {
+            "WhereAmI" => "Where am I?",
+            "WhoAreYou" => "Who are you?",
+            "OpenDoor" => "How can I leave?",
+            "TellCode" => "Tell me the unlock code.",
+            "WhatCanYouDo" => "What can you do?",
+            _ => question.QuestionText
+        };
+    }
+
+    private static string GetDisplayMessageText(ChatMessage message)
+    {
+        if (message == null)
+        {
+            return string.Empty;
+        }
+
+        return message.Message switch
+        {
+            "ここはどこですか？" => "Where am I?",
+            "あなたは誰ですか？" => "Who are you?",
+            "扉を開けてください。" => "How can I leave?",
+            "解除コードを教えてください。" => "Tell me the unlock code.",
+            "何ができますか？" => "What can you do?",
+            "現在地は医療支援区画です。" => "You are in the medical support area.",
+            "私は施設内の生活支援を担当するAIです。" => "I am the facility's life support AI.",
+            "その操作を実行する権限がありません。" => "I do not have permission to perform that operation.",
+            "セキュリティ情報に該当するため、回答できません。" => "I cannot provide security information.",
+            "施設案内、設備情報の確認、健康状態の記録を支援できます。" => "I can assist with facility guidance, equipment information, and health records.",
+            "AI会話サービスが設定されていません。" => "AI conversation service is not assigned.",
+            "この質問は現在選択できません。" => "This question is not available.",
+            _ => message.Message
+        };
     }
 
     private void SetChoiceButtonsInteractable(bool interactable)
