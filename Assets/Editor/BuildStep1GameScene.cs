@@ -64,6 +64,7 @@ public static class BuildStep1GameScene
         ConfigureOpeningPoses(player.Camera.transform, ui.FadeImage, managers.OpeningSequence);
         ApplyBuilderFontToTextChildren(ui.Canvas.transform);
         ApplyBuilderFontToTextChildren(terminal.transform);
+        ImproveGeneratedUiReadability(ui, terminal.transform);
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene, ScenePath);
@@ -250,21 +251,21 @@ public static class BuildStep1GameScene
         SetAnchoredRect(promptText.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -42f), new Vector2(260f, 44f));
         promptText.gameObject.SetActive(false);
 
-        GameObject terminalPanel = CreatePanel("TerminalPanel", canvasObject.transform, new Vector2(0.5f, 0.5f), new Vector2(520f, 300f), new Color(0.03f, 0.05f, 0.06f, 0.92f));
-        CreateText("TitleText", terminalPanel.transform, "生活支援AI", 34, TextAlignmentOptions.Center, Color.white, new Vector2(0f, 85f), new Vector2(430f, 50f));
-        CreateText("MessageText", terminalPanel.transform, "チャットを開始しますか？", 26, TextAlignmentOptions.Center, new Color(0.86f, 0.92f, 0.95f), new Vector2(0f, 25f), new Vector2(430f, 44f));
-        Button terminalStartButton = CreateButton("StartButton", terminalPanel.transform, "開始", new Vector2(-80f, -80f), new Vector2(140f, 46f));
-        Button terminalCloseButton = CreateButton("CloseButton", terminalPanel.transform, "閉じる", new Vector2(80f, -80f), new Vector2(140f, 46f));
+        GameObject terminalPanel = CreatePanel("TerminalPanel", canvasObject.transform, new Vector2(0.5f, 0.5f), new Vector2(560f, 320f), new Color(0.015f, 0.023f, 0.028f, 0.98f));
+        CreateText("TitleText", terminalPanel.transform, "生活支援AI", 38, TextAlignmentOptions.Center, Color.white, new Vector2(0f, 92f), new Vector2(460f, 58f));
+        CreateText("MessageText", terminalPanel.transform, "チャットを開始しますか？", 30, TextAlignmentOptions.Center, new Color(0.96f, 0.99f, 1f, 1f), new Vector2(0f, 24f), new Vector2(470f, 52f));
+        Button terminalStartButton = CreateButton("StartButton", terminalPanel.transform, "開始", new Vector2(-92f, -88f), new Vector2(160f, 54f));
+        Button terminalCloseButton = CreateButton("CloseButton", terminalPanel.transform, "閉じる", new Vector2(92f, -88f), new Vector2(160f, 54f));
         terminalPanel.SetActive(false);
 
-        GameObject chatPanel = CreatePanel("ChatPanel", canvasObject.transform, new Vector2(0.5f, 0.5f), new Vector2(980f, 720f), new Color(0.02f, 0.025f, 0.03f, 0.96f));
-        TextMeshProUGUI aiNameText = CreateText("AINameText", chatPanel.transform, "生活支援AI", 32, TextAlignmentOptions.Left, Color.white, new Vector2(-380f, 305f), new Vector2(320f, 48f));
+        GameObject chatPanel = CreatePanel("ChatPanel", canvasObject.transform, new Vector2(0.5f, 0.5f), new Vector2(980f, 720f), new Color(0.012f, 0.016f, 0.02f, 0.98f));
+        TextMeshProUGUI aiNameText = CreateText("AINameText", chatPanel.transform, "生活支援AI", 34, TextAlignmentOptions.Left, Color.white, new Vector2(-380f, 305f), new Vector2(320f, 52f));
         RectTransform historyContent = CreateScrollView("HistoryScrollView", chatPanel.transform, new Vector2(-170f, 55f), new Vector2(570f, 500f)).Content;
         RectTransform choicesContent = CreateScrollView("QuestionChoicesScrollView", chatPanel.transform, new Vector2(300f, 55f), new Vector2(310f, 500f)).Content;
         Button chatCloseButton = CreateButton("CloseButton", chatPanel.transform, "閉じる", new Vector2(390f, 305f), new Vector2(130f, 44f));
-        TextMeshProUGUI messageTextPrefab = CreateText("MessageTextPrefab", chatPanel.transform, "System: Message", 22, TextAlignmentOptions.Left, Color.white, new Vector2(0f, -320f), new Vector2(500f, 60f));
+        TextMeshProUGUI messageTextPrefab = CreateText("MessageTextPrefab", chatPanel.transform, "System: Message", 24, TextAlignmentOptions.Left, Color.white, new Vector2(0f, -320f), new Vector2(500f, 64f));
         messageTextPrefab.gameObject.SetActive(false);
-        Button choiceButtonPrefab = CreateButton("ChoiceButtonPrefab", chatPanel.transform, "質問候補", new Vector2(0f, -370f), new Vector2(280f, 52f));
+        Button choiceButtonPrefab = CreateButton("ChoiceButtonPrefab", chatPanel.transform, "質問候補", new Vector2(0f, -370f), new Vector2(292f, 58f));
         choiceButtonPrefab.gameObject.SetActive(false);
         chatPanel.SetActive(false);
 
@@ -497,11 +498,11 @@ public static class BuildStep1GameScene
 
     private static void EnsureWorldTerminalText(Transform parent)
     {
-        TextMeshProUGUI title = CreateText("TitleText", parent, "生活支援AI", 42, TextAlignmentOptions.Center, new Color(0.7f, 1f, 1f));
+        TextMeshProUGUI title = CreateText("TitleText", parent, "生活支援AI", 48, TextAlignmentOptions.Center, new Color(0.92f, 1f, 1f, 1f));
         SetAnchoredRect(title.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 58f), new Vector2(360f, 58f));
-        TextMeshProUGUI message = CreateText("MessageText", parent, "チャットを開始しますか？", 30, TextAlignmentOptions.Center, Color.white);
+        TextMeshProUGUI message = CreateText("MessageText", parent, "チャットを開始しますか？", 34, TextAlignmentOptions.Center, Color.white);
         SetAnchoredRect(message.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 0f), new Vector2(380f, 50f));
-        TextMeshProUGUI start = CreateText("StartLabelText", parent, "［開始］", 32, TextAlignmentOptions.Center, new Color(0.7f, 1f, 1f));
+        TextMeshProUGUI start = CreateText("StartLabelText", parent, "［開始］", 36, TextAlignmentOptions.Center, new Color(0.92f, 1f, 1f, 1f));
         SetAnchoredRect(start.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -62f), new Vector2(260f, 50f));
     }
 
@@ -511,7 +512,7 @@ public static class BuildStep1GameScene
         RectTransform scrollRectTransform = GetOrAdd<RectTransform>(scrollObject);
         SetAnchoredRect(scrollRectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), anchoredPosition, size);
         Image background = GetOrAdd<Image>(scrollObject);
-        background.color = new Color(0.07f, 0.08f, 0.09f, 0.92f);
+        background.color = new Color(0.025f, 0.032f, 0.04f, 0.98f);
 
         ScrollRect scrollRect = GetOrAdd<ScrollRect>(scrollObject);
         GameObject viewport = GetOrCreateChild(scrollObject.transform, "Viewport");
@@ -521,7 +522,7 @@ public static class BuildStep1GameScene
         viewportRect.offsetMin = new Vector2(8f, 8f);
         viewportRect.offsetMax = new Vector2(-8f, -8f);
         Image viewportImage = GetOrAdd<Image>(viewport);
-        viewportImage.color = new Color(1f, 1f, 1f, 0.02f);
+        viewportImage.color = new Color(0.02f, 0.026f, 0.032f, 0.9f);
         Mask mask = GetOrAdd<Mask>(viewport);
         mask.showMaskGraphic = false;
 
@@ -556,11 +557,12 @@ public static class BuildStep1GameScene
         RectTransform rect = GetOrAdd<RectTransform>(buttonObject);
         SetAnchoredRect(rect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), anchoredPosition, size);
         Image image = GetOrAdd<Image>(buttonObject);
-        image.color = new Color(0.13f, 0.22f, 0.26f, 1f);
+        image.color = new Color(0.12f, 0.22f, 0.28f, 1f);
         Button button = GetOrAdd<Button>(buttonObject);
         button.targetGraphic = image;
+        ApplyReadableButtonColors(button, image);
 
-        TextMeshProUGUI text = CreateText("Label", buttonObject.transform, label, 22, TextAlignmentOptions.Center, Color.white);
+        TextMeshProUGUI text = CreateText("Label", buttonObject.transform, label, 24, TextAlignmentOptions.Center, Color.white);
         RectTransform textRect = text.rectTransform;
         textRect.anchorMin = Vector2.zero;
         textRect.anchorMax = Vector2.one;
@@ -598,7 +600,7 @@ public static class BuildStep1GameScene
         tmp.text = text;
         tmp.fontSize = fontSize;
         tmp.alignment = alignment;
-        tmp.color = color;
+        tmp.color = Opaque(color);
         tmp.enableWordWrapping = true;
         ApplyBuilderFont(tmp);
         return tmp;
@@ -609,6 +611,113 @@ public static class BuildStep1GameScene
         TextMeshProUGUI tmp = CreateText(name, parent, text, fontSize, alignment, color);
         SetAnchoredRect(tmp.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), anchoredPosition, size);
         return tmp;
+    }
+
+    private static void ImproveGeneratedUiReadability(UiRefs ui, Transform terminal)
+    {
+        SetImageColor(ui.TerminalPanel, new Color(0.015f, 0.023f, 0.028f, 0.98f));
+        SetImageColor(ui.ChatPanel, new Color(0.012f, 0.016f, 0.02f, 0.98f));
+        SetImageColor(ui.PausePanel, new Color(0.012f, 0.016f, 0.02f, 0.98f));
+
+        ApplyReadableTextStyle(ui.TerminalPanel, 26f);
+        ApplyReadableTextStyle(ui.ChatPanel, 24f);
+        ApplyReadableTextStyle(ui.PausePanel, 24f);
+
+        ApplyReadableTextStyle(terminal != null ? terminal.gameObject : null, 34f);
+
+        foreach (Button button in ui.Canvas.GetComponentsInChildren<Button>(true))
+        {
+            Image image = button.targetGraphic as Image;
+            if (image == null)
+            {
+                image = button.GetComponent<Image>();
+            }
+
+            ApplyReadableButtonColors(button, image);
+            TextMeshProUGUI label = button.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (label != null)
+            {
+                ApplyReadableText(label, 24f);
+            }
+        }
+    }
+
+    private static void ApplyReadableTextStyle(GameObject root, float minimumFontSize)
+    {
+        if (root == null)
+        {
+            return;
+        }
+
+        foreach (TextMeshProUGUI text in root.GetComponentsInChildren<TextMeshProUGUI>(true))
+        {
+            ApplyReadableText(text, minimumFontSize);
+        }
+    }
+
+    private static void ApplyReadableText(TextMeshProUGUI text, float minimumFontSize)
+    {
+        if (text == null)
+        {
+            return;
+        }
+
+        text.color = Color.white;
+        if (text.fontSize < minimumFontSize)
+        {
+            text.fontSize = minimumFontSize;
+        }
+
+        text.alpha = 1f;
+        text.enableWordWrapping = true;
+        ApplyBuilderFont(text);
+        EditorUtility.SetDirty(text);
+    }
+
+    private static void ApplyReadableButtonColors(Button button, Image image)
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        if (image != null)
+        {
+            image.color = new Color(0.12f, 0.22f, 0.28f, 1f);
+            EditorUtility.SetDirty(image);
+        }
+
+        ColorBlock colors = button.colors;
+        colors.normalColor = new Color(0.12f, 0.22f, 0.28f, 1f);
+        colors.highlightedColor = new Color(0.18f, 0.34f, 0.42f, 1f);
+        colors.pressedColor = new Color(0.06f, 0.14f, 0.18f, 1f);
+        colors.selectedColor = new Color(0.16f, 0.3f, 0.38f, 1f);
+        colors.disabledColor = new Color(0.08f, 0.09f, 0.1f, 0.72f);
+        colors.colorMultiplier = 1f;
+        colors.fadeDuration = 0.08f;
+        button.colors = colors;
+        EditorUtility.SetDirty(button);
+    }
+
+    private static void SetImageColor(GameObject target, Color color)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        Image image = target.GetComponent<Image>();
+        if (image != null)
+        {
+            image.color = Opaque(color);
+            EditorUtility.SetDirty(image);
+        }
+    }
+
+    private static Color Opaque(Color color)
+    {
+        color.a = 1f;
+        return color;
     }
 
     private static GameObject CreateCube(string name, Transform parent, Vector3 localPosition, Vector3 localScale, Material material)
