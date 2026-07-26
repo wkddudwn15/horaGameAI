@@ -21,10 +21,25 @@ public static class BuildStep1GameScene
     private const string QuestionFolder = "Assets/Data/AIQuestions";
     private const string InputReferenceFolder = "Assets/Settings/InputActionReferences";
     private const string VolumeProfilePath = "Assets/Settings/Step1OpeningVolumeProfile.asset";
+    private const string FallbackTmpFontAssetPath = "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset";
+    private static readonly string[] JapaneseTmpFontSearchFolders =
+    {
+        "Assets/Fonts",
+        "Assets/Resources/Fonts",
+        "Assets/TextMesh Pro/Resources/Fonts & Materials",
+        "Assets/TextMesh Pro/Resources",
+        "Assets/Data/Fonts"
+    };
+
+    private static TMP_FontAsset cachedTmpFontAsset;
+    private static bool warnedMissingJapaneseFont;
 
     [MenuItem("Tools/Horror Prototype/Build Step 1 GameScene")]
     public static void BuildScene()
     {
+        cachedTmpFontAsset = null;
+        warnedMissingJapaneseFont = false;
+
         EnsureFolder("Assets/Scenes");
         EnsureFolder("Assets/Settings");
 
@@ -47,6 +62,8 @@ public static class BuildStep1GameScene
         ConfigureControllers(player, managers, ui, terminal, globalVolume);
         WireButtons(ui);
         ConfigureOpeningPoses(player.Camera.transform, ui.FadeImage, managers.OpeningSequence);
+        ApplyBuilderFontToTextChildren(ui.Canvas.transform);
+        ApplyBuilderFontToTextChildren(terminal.transform);
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene, ScenePath);
@@ -583,6 +600,7 @@ public static class BuildStep1GameScene
         tmp.alignment = alignment;
         tmp.color = color;
         tmp.enableWordWrapping = true;
+        ApplyBuilderFont(tmp);
         return tmp;
     }
 
@@ -721,6 +739,118 @@ public static class BuildStep1GameScene
         {
             material.SetColor("_Color", color);
         }
+    }
+
+    private static void ApplyBuilderFontToTextChildren(Transform root)
+    {
+        if (root == null)
+        {
+            return;
+        }
+
+        foreach (TextMeshProUGUI text in root.GetComponentsInChildren<TextMeshProUGUI>(true))
+        {
+            ApplyBuilderFont(text);
+        }
+    }
+
+    private static void ApplyBuilderFont(TextMeshProUGUI text)
+    {
+        if (text == null)
+        {
+            return;
+        }
+
+        TMP_FontAsset fontAsset = ResolveBuilderTmpFontAsset();
+        if (fontAsset == null)
+        {
+            return;
+        }
+
+        text.font = fontAsset;
+        EditorUtility.SetDirty(text);
+    }
+
+    private static TMP_FontAsset ResolveBuilderTmpFontAsset()
+    {
+        if (cachedTmpFontAsset != null)
+        {
+            return cachedTmpFontAsset;
+        }
+
+        TMP_FontAsset japaneseFont = FindJapaneseTmpFontAsset();
+        if (japaneseFont != null)
+        {
+            cachedTmpFontAsset = japaneseFont;
+            return cachedTmpFontAsset;
+        }
+
+        TMP_FontAsset fallbackFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FallbackTmpFontAssetPath);
+        if (!warnedMissingJapaneseFont)
+        {
+            warnedMissingJapaneseFont = true;
+            Debug.LogWarning(
+                "Japanese TMP Font Asset was not found. Builder searched: "
+                + string.Join(", ", JapaneseTmpFontSearchFolders)
+                + $". Falling back to {FallbackTmpFontAssetPath}. Japanese glyph missing warnings may remain until a Japanese TMP Font Asset is added.");
+        }
+
+        cachedTmpFontAsset = fallbackFont;
+        return cachedTmpFontAsset;
+    }
+
+    private static TMP_FontAsset FindJapaneseTmpFontAsset()
+    {
+        string[] validFolders = GetValidFontSearchFolders();
+        if (validFolders.Length == 0)
+        {
+            return null;
+        }
+
+        foreach (string guid in AssetDatabase.FindAssets("t:TMP_FontAsset", validFolders))
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            TMP_FontAsset fontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path);
+            if (SupportsRequiredJapaneseGlyphs(fontAsset))
+            {
+                return fontAsset;
+            }
+        }
+
+        return null;
+    }
+
+    private static string[] GetValidFontSearchFolders()
+    {
+        List<string> validFolders = new List<string>();
+        foreach (string folder in JapaneseTmpFontSearchFolders)
+        {
+            if (AssetDatabase.IsValidFolder(folder))
+            {
+                validFolders.Add(folder);
+            }
+        }
+
+        return validFolders.ToArray();
+    }
+
+    private static bool SupportsRequiredJapaneseGlyphs(TMP_FontAsset fontAsset)
+    {
+        if (fontAsset == null)
+        {
+            return false;
+        }
+
+        const string sampleText = "生活支援現在地医療区画施設内担当扉解除コード教えてください何ができますかゲームに戻るタイトルへ終了調べる開始";
+        foreach (char character in sampleText)
+        {
+            if (!fontAsset.HasCharacter(character))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static void NormalizeSceneCamerasAndAudio(Camera gameplayCamera)
